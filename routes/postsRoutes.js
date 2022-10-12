@@ -1,26 +1,22 @@
 import express from "express";
-
+import {
+  fetchPosts,
+  getPost,
+  createPost,
+  updatePost,
+  deletePost,
+} from "../controller/postController.js";
 const router = express.Router();
 
 //fetchPosts
-router.get("/", (req, res) => {
-  res.json({ mssg: "fetch all" });
-});
+router.get("/", fetchPosts);
 
-router.get("/:id", (req, res) => {
-  res.json({ mssg: "get a single post" });
-});
+router.get("/:id", getPost);
 
-router.post("/", (req, res) => {
-  res.json({ mssg: "create new one" });
-});
+router.post("/", createPost);
 
-router.patch("/:id", (req, res) => {
-  res.json({ mssg: "update one" });
-});
+router.patch("/:id", updatePost);
 
-router.delete("/:id", (req, res) => {
-  res.json({ mssg: "delete one" });
-});
+router.delete("/:id", deletePost);
 
 export default router;
