@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import postRoutes from "./routes/posts.js";
+import postRoutes from "./routes/postsRoutes.js";
 
 //express app setup
 const app = express();
