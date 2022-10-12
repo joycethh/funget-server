@@ -2,12 +2,25 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/", fetchPosts);
+//fetchPosts
+router.get("/", (req, res) => {
+  res.json({ mssg: "fetch all" });
+});
 
-router.get("/:id", getPost);
+router.get("/:id", (req, res) => {
+  res.json({ mssg: "get a single post" });
+});
 
-router.patch("/:id", updatePost);
+router.post("/", (req, res) => {
+  res.json({ mssg: "create new one" });
+});
 
-router.delete("/:id", deletePost);
+router.patch("/:id", (req, res) => {
+  res.json({ mssg: "update one" });
+});
+
+router.delete("/:id", (req, res) => {
+  res.json({ mssg: "delete one" });
+});
 
 export default router;

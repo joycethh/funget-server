@@ -4,16 +4,21 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 
+import postRoutes from "./routes/posts.js";
+
 //express app setup
 const app = express();
+
+const PORT = process.env.PORT;
+const URL = process.env.MONGODB_URL;
 
 //middleware
 app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-const PORT = process.env.PORT;
-const URL = process.env.MONGODB_URL;
+//routes
+app.use("/posts", postRoutes);
 
 //for testing
 app.get("/", (req, res) => {
