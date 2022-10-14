@@ -13,8 +13,8 @@ const PORT = process.env.PORT;
 const URL = process.env.MONGODB_URL;
 
 //middleware
-app.use(bodyParser.json({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 //routes
