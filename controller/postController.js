@@ -4,7 +4,7 @@ import PostMessage from "../models/postsModel.js";
 //fetch all
 export const fetchPosts = async (req, res) => {
   try {
-    const posts = await PostMessage.find();
+    const posts = await PostMessage.find().sort({ createdAt: -1 });
 
     res.status(200).json(posts);
   } catch (error) {
