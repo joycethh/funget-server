@@ -27,8 +27,7 @@ export const getPost = async (req, res) => {
 //create one
 export const createPost = async (req, res) => {
   const { author, message, tags, seletedFile, image } = req.body;
-  // Your problem was that PostMessage expected an array of data_url strings, but you gave it an array of objects and
-  // const image = [req.body.image[0].data_url];
+
   const newPost = new PostMessage({
     author,
     message,
@@ -36,7 +35,6 @@ export const createPost = async (req, res) => {
     seletedFile,
     image,
   });
-  console.log("newPost", newPost);
   try {
     await newPost.save();
     res.status(200).json(newPost);
