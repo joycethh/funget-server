@@ -22,7 +22,7 @@ app.use("/posts", postRoutes);
 
 //for testing
 app.get("/", (req, res) => {
-  res.send("APP IS RUNNING");
+  res.send("The FUNGET APP IS RUNNING");
 });
 
 //DB connection
