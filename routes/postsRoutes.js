@@ -20,6 +20,6 @@ router.patch("/:id", updatePost);
 
 router.delete("/:id", deletePost);
 
-router.patch("/:id", likePost);
+router.patch("/:id/likes", likePost);
 
 export default router;
