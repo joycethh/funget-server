@@ -7,7 +7,10 @@ const postSchema = new mongoose.Schema({
   message: String,
   tags: [String],
   image: Object,
-  likes: Number,
+  likes: {
+    type: Number,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     default: new Date(),
