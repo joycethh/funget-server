@@ -6,14 +6,28 @@ import User from "../models/userModel.js";
 //sign up
 export const signUp = async (req, res) => {
   const { username, email, password, confirmedPassword } = req.body;
-  const newUser = new User({
-    username,
-    email,
-    password,
-  });
+  //1. user already exist?
+  //2. new user, compare password and confirmedPassword
+  //3. password match: -- create and save new user, --sign in user and assign token
   try {
-    await newUser.save();
-    res.status(200).json(newUser);
+    const existUser = await User.findOne({ email });
+    if (existUser) return res.status(404).json({ mssg: "User already exists" });
+    if (password !== confirmedPassword)
+      return res
+        .status(404)
+        .json({ mssg: "The paassword confirmation doesn't match" });
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: await bcrypt.hash(password, 12),
+    });
+
+    const token = jwt.sign(
+      { email: newUser.email, id: newUser._id },
+      process.env.SECRET,
+      { expiresIn: "1d" }
+    );
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -42,7 +56,7 @@ export const signIn = async (req, res) => {
       process.env.SECRET,
       { expiresIn: "1d" }
     );
-    res.status(200).json({ data: existUser, token });
+    res.status(200).json({ result: existUser, token });
   } catch (error) {
     res.status(500).json({ mssg: "Something went wrong" });
   }
