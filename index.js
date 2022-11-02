@@ -20,7 +20,7 @@ app.use(cors());
 
 //routes
 app.use("/posts", postRoutes);
-app.use("/auth", userRoutes);
+app.use("/user", userRoutes);
 
 //for testing
 app.get("/", (req, res) => {
