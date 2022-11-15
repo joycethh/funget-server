@@ -15,6 +15,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  id: { type: String },
 });
 
 const user = mongoose.model("user", userSchema);

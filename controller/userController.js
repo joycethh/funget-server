@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
 //register
-export const signUp = async (req, res) => {
+export const register = async (req, res) => {
   const { username, email, password, confirmedPassword } = req.body;
   //1. user already exist?
   //2. new user, compare password and confirmedPassword
@@ -36,7 +36,7 @@ export const signUp = async (req, res) => {
 };
 
 //log in
-export const signIn = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   //1. user exist?
@@ -55,8 +55,8 @@ export const signIn = async (req, res) => {
 
     const token = jwt.sign(
       { email: existUser.email, id: existUser._id },
-      process.env.SECRET
-      // { expiresIn: "1h" }
+      process.env.SECRET,
+      { expiresIn: "1h" }
     );
     res.status(200).json({ result: existUser, token });
   } catch (error) {
