@@ -26,8 +26,8 @@ export const signUp = async (req, res) => {
 
     const token = jwt.sign(
       { email: newUser.email, id: newUser._id },
-      process.env.SECRET,
-      { expiresIn: "1h" }
+      process.env.SECRET
+      // { expiresIn: "1h" }
     );
     res.status(200).json({ result: newUser, token });
   } catch (error) {
@@ -55,8 +55,8 @@ export const signIn = async (req, res) => {
 
     const token = jwt.sign(
       { email: existUser.email, id: existUser._id },
-      process.env.SECRET,
-      { expiresIn: "1h" }
+      process.env.SECRET
+      // { expiresIn: "1h" }
     );
     res.status(200).json({ result: existUser, token });
   } catch (error) {

@@ -12,10 +12,22 @@ export const fetchPosts = async (req, res) => {
   }
 };
 
+//get single
+export const getPost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await PostMessage.findById(id);
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(404).json({ mssg: error.message });
+  }
+};
+
 //create one
 export const createPost = async (req, res) => {
   const { message, tags, seletedFile, image } = req.body;
-
+  console.log("create req.body", req.body);
   const newPost = new PostMessage({
     author: req.userId,
     message,
@@ -27,6 +39,7 @@ export const createPost = async (req, res) => {
   try {
     await newPost.save();
     res.status(200).json(newPost);
+    return;
   } catch (error) {
     res.status(404).json({ mssg: error.message });
     return;
