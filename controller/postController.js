@@ -36,6 +36,7 @@ export const createPost = async (req, res) => {
     image,
     createdAt: new Date().toISOString(),
   });
+  console.log("newPost", newPost);
   try {
     await newPost.save();
     res.status(200).json(newPost);
