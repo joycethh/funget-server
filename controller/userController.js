@@ -25,7 +25,7 @@ export const register = async (req, res) => {
     });
 
     const token = jwt.sign(
-      { email: newUser.email, name: newUser.username, id: newUser._id },
+      { email: newUser.email, username: newUser.username, id: newUser._id },
       process.env.SECRET,
       { expiresIn: "1h" }
     );
@@ -54,7 +54,11 @@ export const login = async (req, res) => {
       return res.status(404).json({ mssg: "Invalid password" });
 
     const token = jwt.sign(
-      { email: existUser.email, name: existUser.username, id: existUser._id },
+      {
+        email: existUser.email,
+        username: existUser.username,
+        id: existUser._id,
+      },
       process.env.SECRET,
       { expiresIn: "1h" }
     );
