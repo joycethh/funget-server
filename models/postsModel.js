@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const postSchema = new mongoose.Schema({
-  author: String,
   message: String,
   tags: [String],
   image: Object,
@@ -11,6 +10,9 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  userId: String,
+  userName: String,
+  userAvatar: String,
   createdAt: {
     type: Date,
     default: new Date(),

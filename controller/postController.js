@@ -26,34 +26,43 @@ export const getPost = async (req, res) => {
 
 //create one
 export const createPost = async (req, res) => {
-  const { author, message, tags, seletedFile, image } = req.body;
+  const { message, tags, seletedFile, image } = req.body;
 
   const newPost = new PostMessage({
-    author,
     message,
     tags,
     seletedFile,
     image,
+    createdAt: new Date().toISOString(),
+    userId: req.userId,
+    userName: req.author,
+    userAvatar: req.avatar,
   });
+
   try {
     await newPost.save();
     res.status(200).json(newPost);
+    return;
   } catch (error) {
     res.status(404).json({ mssg: error.message });
+    return;
   }
 };
 
 //update one
 export const updatePost = async (req, res) => {
   const { id } = req.params;
-  const { message, tags, seletedFile } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const updatedPost = { message, tags, seletedFile, _id: id };
-  await PostMessage.findByIdAndUpdate(id, updatePost, { new: true });
-  res.json(updatedPost);
+  const updatedPost = await PostMessage.findByIdAndUpdate(
+    { _id: id },
+    { ...req.body },
+    { new: true }
+  );
+
+  res.status(200).json(updatedPost);
 };
 
 // like post

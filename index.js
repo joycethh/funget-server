@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import postRoutes from "./routes/postsRoutes.js";
+import userRoutes from "./routes/usersRoutes.js";
 
 //express app setup
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors());
 
 //routes
 app.use("/posts", postRoutes);
+app.use("/users", userRoutes);
 
 //for testing
 app.get("/", (req, res) => {
