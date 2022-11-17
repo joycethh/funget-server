@@ -27,7 +27,7 @@ export const getPost = async (req, res) => {
 //create one
 export const createPost = async (req, res) => {
   const { message, tags, seletedFile, image } = req.body;
-  console.log("create req.body", req.body);
+
   const newPost = new PostMessage({
     message,
     tags,
@@ -38,7 +38,7 @@ export const createPost = async (req, res) => {
     userName: req.author,
     userAvatar: req.avatar,
   });
-  console.log("newPost", newPost);
+
   try {
     await newPost.save();
     res.status(200).json(newPost);
