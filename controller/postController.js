@@ -29,7 +29,8 @@ export const createPost = async (req, res) => {
   const { message, tags, seletedFile, image } = req.body;
   console.log("create req.body", req.body);
   const newPost = new PostMessage({
-    author: req.userId,
+    userId: req.userId,
+    author: req.author,
     message,
     tags,
     seletedFile,

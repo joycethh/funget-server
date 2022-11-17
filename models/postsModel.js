@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const postSchema = new mongoose.Schema({
+  userId: String,
   author: String,
   message: String,
   tags: [String],

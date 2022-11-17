@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 const authMiddleWare = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    console.log("req.headers.authorization", req.headers.authorization);
 
     const isLocalAuth = token.length < 500;
 
@@ -14,10 +13,14 @@ const authMiddleWare = async (req, res, next) => {
       decodedData = jwt.verify(token, process.env.SECRET);
       console.log("decodedData", decodedData);
       req.userId = decodedData?.id;
+      req.author = decodedData?.username;
     } else {
       decodedData = jwt.decode(token);
+      console.log("decodedData", decodedData);
       req.userId = decodedData?.sub;
+      req.author = decodedData?.name;
     }
+    console.log("decodedData", decodedData);
 
     next();
   } catch (error) {
