@@ -29,13 +29,14 @@ export const createPost = async (req, res) => {
   const { message, tags, seletedFile, image } = req.body;
   console.log("create req.body", req.body);
   const newPost = new PostMessage({
-    userId: req.userId,
-    author: req.author,
     message,
     tags,
     seletedFile,
     image,
     createdAt: new Date().toISOString(),
+    userId: req.userId,
+    userName: req.author,
+    userAvatar: req.avatar,
   });
   console.log("newPost", newPost);
   try {

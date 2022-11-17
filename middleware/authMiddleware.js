@@ -12,13 +12,17 @@ const authMiddleWare = async (req, res, next) => {
     if (token && isLocalAuth) {
       decodedData = jwt.verify(token, process.env.SECRET);
       console.log("decodedData", decodedData);
+
       req.userId = decodedData?.id;
-      req.author = decodedData?.username;
+      req.author = decodedData?.name;
+      req.avatar = decodedData?.name.charAt(0);
     } else {
       decodedData = jwt.decode(token);
       console.log("decodedData", decodedData);
+
       req.userId = decodedData?.sub;
       req.author = decodedData?.name;
+      req.avatar = decodedData?.picture;
     }
     console.log("decodedData", decodedData);
 
