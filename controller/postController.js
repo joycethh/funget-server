@@ -69,7 +69,6 @@ export const updatePost = async (req, res) => {
 // like post
 export const likePost = async (req, res) => {
   const { id } = req.params;
-  console.log("likePost id params", id);
 
   if (!req.userId) return res.json({ mssg: "Please sign in to like the post" });
 
@@ -96,21 +95,6 @@ export const likePost = async (req, res) => {
   );
   res.json(updatedPost);
 };
-
-// export const likePost = async (req, res) => {
-//   const { id } = req.params;
-
-//   if (!mongoose.Types.ObjectId.isValid(id))
-//     return res.status(404).send(`No post with id: ${id}`);
-
-//   const seletedPost = await PostMessage.findById(id);
-//   const updatedPost = await PostMessage.findByIdAndUpdate(
-//     id,
-//     { likes: seletedPost.likes + 1 },
-//     { new: true }
-//   );
-//   res.json(updatedPost);
-// };
 
 //delete one
 export const deletePost = async (req, res) => {
