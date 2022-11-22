@@ -84,7 +84,7 @@ export const likePost = async (req, res) => {
   if (index === -1) {
     seletedPost.likes.push(req.userId);
   } else {
-    seletedPost.likes = post.likes.filter(
+    seletedPost.likes = seletedPost.likes.filter(
       (userId) => userId !== String(req.userId)
     );
   }
