@@ -10,10 +10,8 @@ const postSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
-  // likes: {
-  //   type: Number,
-  //   default: 0,
-  // },
+  comments: Object,
+  //author's info
   userId: String,
   userName: String,
   userAvatar: String,
@@ -26,3 +24,8 @@ const postSchema = new mongoose.Schema({
 const PostMessage = mongoose.model("PostMessage", postSchema);
 
 export default PostMessage;
+
+// comments: {
+//   type: [String],
+//   default: [],
+// },

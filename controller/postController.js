@@ -52,7 +52,6 @@ export const createPost = async (req, res) => {
 //update one
 export const updatePost = async (req, res) => {
   const { id } = req.params;
-  console.log("updatepost id params", id);
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
@@ -64,6 +63,21 @@ export const updatePost = async (req, res) => {
   );
 
   res.status(200).json(updatedPost);
+};
+
+//delete one
+export const deletePost = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No post with id: ${id}`);
+
+  try {
+    await PostMessage.findByIdAndDelete(id);
+    res.status(200).json(id);
+  } catch (error) {
+    res.status(404).json({ mssg: error.message });
+  }
 };
 
 // like post
@@ -96,17 +110,25 @@ export const likePost = async (req, res) => {
   res.json(updatedPost);
 };
 
-//delete one
-export const deletePost = async (req, res) => {
+//comment post
+export const commentPost = async (req, res) => {
   const { id } = req.params;
+  console.log("comment post id", id);
+  if (!req.userId) return res.json({ mssg: "Please sign in to like the post" });
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  try {
-    await PostMessage.findByIdAndDelete(id);
-    res.status(200).json(id);
-  } catch (error) {
-    res.status(404).json({ mssg: error.message });
-  }
+  const commentsBody = req.body;
+  console.log("commentsBody", commentsBody);
+
+  const seletedPost = await PostMessage.findById(id);
+  seletedPost.comments.push(commentsBody);
+  const updatedPost = await PostMessage.findByIdAndUpdate(
+    { _id: id },
+    { ...seletedPost },
+    { new: true }
+  );
+
+  res.status(200).json(updatedPost);
 };
