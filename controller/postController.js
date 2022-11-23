@@ -83,7 +83,7 @@ export const deletePost = async (req, res) => {
 // like post
 export const likePost = async (req, res) => {
   const { id } = req.params;
-
+  console.log("like post id", id);
   if (!req.userId) return res.json({ mssg: "Please sign in to like the post" });
 
   if (!mongoose.Types.ObjectId.isValid(id))
@@ -104,7 +104,7 @@ export const likePost = async (req, res) => {
 
   const updatedPost = await PostMessage.findByIdAndUpdate(
     { _id: id },
-    { ...seletedPost },
+    seletedPost,
     { new: true }
   );
   res.json(updatedPost);
