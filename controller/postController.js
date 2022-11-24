@@ -113,22 +113,32 @@ export const likePost = async (req, res) => {
 //comment post
 export const commentPost = async (req, res) => {
   const { id } = req.params;
-  console.log("comment post id", id);
-  if (!req.userId) return res.json({ mssg: "Please sign in to like the post" });
+
+  if (!req.userId)
+    return res.json({ mssg: "Please sign in to comment the post" });
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
+  const commentBody = req.body;
 
-  const commentsBody = req.body;
-  console.log("commentsBody", commentsBody);
+  console.log("commentBody", commentBody);
 
   const seletedPost = await PostMessage.findById(id);
-  seletedPost.comments.push(commentsBody);
+
+  seletedPost.comments.commentBody.push(commentBody);
+
   const updatedPost = await PostMessage.findByIdAndUpdate(
     { _id: id },
-    { ...seletedPost },
+    seletedPost,
     { new: true }
   );
 
   res.status(200).json(updatedPost);
 };
+
+// comments: {
+//   commentBody: commentBody,
+//   userId: req.userId,
+//   userName: req.userName,
+//   userAvatar: req.userAvatar,
+// },

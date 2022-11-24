@@ -25,6 +25,6 @@ router.delete("/edit/:id", auth, deletePost);
 
 router.patch("/likes/:id", auth, likePost);
 
-router.patch("/comments/:id", auth, commentPost);
+router.post("/comments/:id", auth, commentPost);
 
 export default router;
