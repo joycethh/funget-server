@@ -24,15 +24,3 @@ const postSchema = new mongoose.Schema({
 const PostMessage = mongoose.model("PostMessage", postSchema);
 
 export default PostMessage;
-
-// comments: {
-//   commentBody: [String],
-//   userId: String,
-//   userName: String,
-//   userAvatar: String,
-// },
-
-// comments: {
-//   type: [String],
-//   default: [],
-// },
