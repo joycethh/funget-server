@@ -65,22 +65,6 @@ export const updatePost = async (req, res) => {
   res.status(200).json(updatedPost);
 };
 
-// like post
-export const likePost = async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No post with id: ${id}`);
-
-  const seletedPost = await PostMessage.findById(id);
-  const updatedPost = await PostMessage.findByIdAndUpdate(
-    id,
-    { likes: seletedPost.likes + 1 },
-    { new: true }
-  );
-  res.json(updatedPost);
-};
-
 //delete one
 export const deletePost = async (req, res) => {
   const { id } = req.params;
@@ -93,5 +77,73 @@ export const deletePost = async (req, res) => {
     res.status(200).json(id);
   } catch (error) {
     res.status(404).json({ mssg: error.message });
+  }
+};
+
+// like post
+export const likePost = async (req, res) => {
+  const { id } = req.params;
+  if (!req.userId) return res.json({ mssg: "Please sign in to like the post" });
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No post with id: ${id}`);
+
+  const seletedPost = await PostMessage.findById(id);
+
+  const index = seletedPost.likes.findIndex(
+    (userId) => userId === String(req.userId)
+  );
+  if (index === -1) {
+    seletedPost.likes.push(req.userId);
+  } else {
+    seletedPost.likes = seletedPost.likes.filter(
+      (userId) => userId !== String(req.userId)
+    );
+  }
+
+  const updatedPost = await PostMessage.findByIdAndUpdate(
+    { _id: id },
+    seletedPost,
+    { new: true }
+  );
+  res.json(updatedPost);
+};
+
+//comment post
+export const commentPost = async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.userId)
+    return res.json({ mssg: "Please sign in to comment the post" });
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No post with id: ${id}`);
+
+  const seletedPost = await PostMessage.findById(id);
+  const commentBody = req.body;
+  console.log("commentBody", commentBody);
+
+  if (seletedPost.comments) {
+    seletedPost.comments.commentBody.push(commentBody);
+    const updatedPost = await PostMessage.findByIdAndUpdate(
+      { _id: id },
+      seletedPost,
+      { new: true }
+    );
+
+    res.status(200).json(updatedPost);
+    return;
+  } else {
+    const commentBody = req.body;
+    const postWithComments = { seletedPost, comments: commentBody };
+    console.log("postWithComments", postWithComments);
+    const updatedPost = await PostMessage.findByIdAndUpdate(
+      { _id: id },
+      postWithComments,
+      { new: true }
+    );
+
+    res.status(200).json(updatedPost);
+    return;
   }
 };
