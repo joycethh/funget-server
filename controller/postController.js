@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
-import PostMessage from "../models/postsModel.js";
+import PostDetails from "../../MUI5_Practice/src/featuers/posts/PostDetail.js";
+import Post from "../models/postsModel.js";
 
 //fetch all
 export const fetchPosts = async (req, res) => {
   try {
-    const posts = await PostMessage.find().sort({ createdAt: -1 });
+    const posts = await Post.find().sort({ createdAt: -1 });
 
     res.status(200).json(posts);
   } catch (error) {
@@ -17,7 +18,7 @@ export const getPost = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const post = await PostMessage.findById(id);
+    const post = await Post.findById(id);
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ mssg: error.message });
@@ -26,12 +27,10 @@ export const getPost = async (req, res) => {
 
 //create one
 export const createPost = async (req, res) => {
-  const { message, tags, seletedFile, image } = req.body;
+  const { message, image } = req.body;
 
-  const newPost = new PostMessage({
+  const newPost = new Post({
     message,
-    tags,
-    seletedFile,
     image,
     createdAt: new Date().toISOString(),
     userId: req.userId,
@@ -56,7 +55,7 @@ export const updatePost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(
+  const updatedPost = await Post.findByIdAndUpdate(
     { _id: id },
     { ...req.body },
     { new: true }
@@ -73,7 +72,7 @@ export const deletePost = async (req, res) => {
     return res.status(404).send(`No post with id: ${id}`);
 
   try {
-    await PostMessage.findByIdAndDelete(id);
+    await Post.findByIdAndDelete(id);
     res.status(200).json(id);
   } catch (error) {
     res.status(404).json({ mssg: error.message });
@@ -88,7 +87,7 @@ export const likePost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const seletedPost = await PostMessage.findById(id);
+  const seletedPost = await Post.findById(id);
 
   const index = seletedPost.likes.findIndex(
     (userId) => userId === String(req.userId)
@@ -101,11 +100,9 @@ export const likePost = async (req, res) => {
     );
   }
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(
-    { _id: id },
-    seletedPost,
-    { new: true }
-  );
+  const updatedPost = await Post.findByIdAndUpdate({ _id: id }, seletedPost, {
+    new: true,
+  });
   res.json(updatedPost);
 };
 
@@ -119,17 +116,15 @@ export const commentPost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const seletedPost = await PostMessage.findById(id);
+  const seletedPost = await Post.findById(id);
   const commentBody = req.body;
   console.log("commentBody", commentBody);
 
   if (seletedPost.comments) {
     seletedPost.comments.commentBody.push(commentBody);
-    const updatedPost = await PostMessage.findByIdAndUpdate(
-      { _id: id },
-      seletedPost,
-      { new: true }
-    );
+    const updatedPost = await Post.findByIdAndUpdate({ _id: id }, seletedPost, {
+      new: true,
+    });
 
     res.status(200).json(updatedPost);
     return;
@@ -137,7 +132,7 @@ export const commentPost = async (req, res) => {
     const commentBody = req.body;
     const postWithComments = { seletedPost, comments: commentBody };
     console.log("postWithComments", postWithComments);
-    const updatedPost = await PostMessage.findByIdAndUpdate(
+    const updatedPost = await Post.findByIdAndUpdate(
       { _id: id },
       postWithComments,
       { new: true }
