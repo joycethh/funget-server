@@ -27,14 +27,14 @@ export const getPost = async (req, res) => {
 //create one
 export const createPost = async (req, res) => {
   const { message, image } = req.body;
-
+  console.log("create req-body", req.body);
   const newPost = new Post({
     message,
     image,
     createdAt: new Date().toISOString(),
-    userId: req.userId,
-    userName: req.author,
-    userAvatar: req.avatar,
+    authorId: req.userId,
+    authorName: req.author,
+    authorAvatar: req.avatar,
   });
 
   try {

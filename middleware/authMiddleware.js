@@ -4,14 +4,14 @@ import jwt from "jsonwebtoken";
 const authMiddleWare = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-
+    console.log("atuh=token", token);
     const isLocalAuth = token.length < 500;
 
     let decodedData;
 
     if (token && isLocalAuth) {
       decodedData = jwt.verify(token, process.env.SECRET);
-
+      console.log("local decodedData", decodedData);
       req.userId = decodedData?.id;
       req.author = decodedData?.username;
       req.avatar = decodedData?.username.charAt(0);
@@ -19,7 +19,7 @@ const authMiddleWare = async (req, res, next) => {
       decodedData = jwt.decode(token);
 
       req.userId = decodedData?.sub;
-      req.author = decodedData?.name;
+      req.author = decodedData?.username;
       req.avatar = decodedData?.picture;
     }
 
