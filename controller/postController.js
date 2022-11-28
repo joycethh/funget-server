@@ -105,39 +105,46 @@ export const likePost = async (req, res) => {
   res.json(updatedPost);
 };
 
-//comment post
+//add comment
 export const commentPost = async (req, res) => {
   const { id } = req.params;
-
   if (!req.userId)
     return res.json({ mssg: "Please sign in to comment the post" });
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const seletedPost = await Post.findById(id);
-  const commentBody = req.body;
-  console.log("commentBody", commentBody);
+  try {
+    const seletedPost = await Post.findById(id);
 
-  if (seletedPost.comments) {
-    seletedPost.comments.commentBody.push(commentBody);
-    const updatedPost = await Post.findByIdAndUpdate({ _id: id }, seletedPost, {
-      new: true,
+    const newComment = new Comment({
+      content: content,
+      postId: seletedPost._id, //assign post id from the seleted post to the comment.postId key.
     });
 
-    res.status(200).json(updatedPost);
-    return;
-  } else {
-    const commentBody = req.body;
-    const postWithComments = { seletedPost, comments: commentBody };
-    console.log("postWithComments", postWithComments);
-    const updatedPost = await Post.findByIdAndUpdate(
-      { _id: id },
-      postWithComments,
-      { new: true }
-    );
+    await newComment.save();
 
-    res.status(200).json(updatedPost);
-    return;
+    seletedPost.comments.push(newComment);
+    await seletedPost.save();
+    res.status(200).json(seletedPost);
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+//get comments
+export const getComment = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No post with id: ${id}`);
+  try {
+    const data = await Post.findById(id).populate({
+      path: "commentsAdded",
+      select: "content",
+    });
+    console.log("data", data);
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 };

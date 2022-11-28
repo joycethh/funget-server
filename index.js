@@ -29,59 +29,6 @@ app.get("/", (req, res) => {
   res.send("The FUNGET APP IS RUNNING");
 });
 
-//db relations test
-app.post("/testposts/addPost", async (req, res) => {
-  try {
-    const newPost = new Post(req.body);
-    await newPost.save();
-    res.status(201).json({ success: true, data: newPost });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
-
-app.post("/testposts/addComment/:id", async (req, res) => {
-  try {
-    const { content } = req.body;
-    console.log("content", content);
-
-    const { id } = req.params; //6383dafd4f5a402c7f139433
-    const seletedPost = await Post.findById(id);
-    console.log("seletedPost", seletedPost);
-
-    const newComment = new Comment({
-      content: content,
-      postId: seletedPost._id, //assign post id from the seleted post to the comment.postId key.
-    });
-    console.log("newComment", newComment);
-
-    await newComment.save();
-
-    seletedPost.comments.push(newComment);
-    console.log("selectedPost", seletedPost);
-
-    await seletedPost.save();
-
-    res.status(200).json({ success: true, data: seletedPost });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
-
-app.get("/testposts/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log("id", id);
-  try {
-    const data = await Post.findById(id).populate({
-      path: "commentsAdded",
-      select: "content",
-    });
-    console.log("data", data);
-    res.status(200).json({ success: true, data });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
 //DB connection
 mongoose
   .connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })

@@ -13,13 +13,9 @@ const commentSchema = new mongoose.Schema(
       ref: "Post",
       required: "true",
     },
-    // authorId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "User",
-    //   required: true,
-    // },
-    userName: String,
-    userAvatar: String,
+    authorId: String,
+    authorName: String,
+    authorAvatar: String,
   },
   { timestamps: true }
 );
