@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Post from "../models/postsModel.js";
+import Comment from "../models/commentsModel.js";
 
 //fetch all
 export const fetchPosts = async (req, res) => {
@@ -108,6 +109,10 @@ export const likePost = async (req, res) => {
 //add comment
 export const commentPost = async (req, res) => {
   const { id } = req.params;
+  console.log("id", id);
+  const { content } = req.body;
+  console.log("content", content);
+
   if (!req.userId)
     return res.json({ mssg: "Please sign in to comment the post" });
 
@@ -116,9 +121,13 @@ export const commentPost = async (req, res) => {
 
   try {
     const seletedPost = await Post.findById(id);
+    console.log("selectedPost", seletedPost);
 
     const newComment = new Comment({
       content: content,
+      authorId: req.userId,
+      authorName: req.author,
+      authorAvatar: req.avatar,
       postId: seletedPost._id, //assign post id from the seleted post to the comment.postId key.
     });
 

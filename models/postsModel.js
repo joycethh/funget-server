@@ -20,14 +20,14 @@ const postSchema = new mongoose.Schema({
   ],
 });
 
-postSchema.virtual("commentsAdded", {
-  ref: "Comment",
-  localField: "_id",
-  foreignField: "postId",
-});
+// postSchema.virtual("commentsAdded", {
+//   ref: "Comment",
+//   localField: "_id",
+//   foreignField: "postId",
+// });
 
-postSchema.set("toObject", { virtuals: true });
-postSchema.set("toJSON", { virtuals: true });
+// postSchema.set("toObject", { virtuals: true });
+// postSchema.set("toJSON", { virtuals: true });
 
 // const postSchema = new mongoose.Schema({
 //   message: {
