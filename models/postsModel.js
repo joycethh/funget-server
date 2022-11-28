@@ -8,11 +8,11 @@ const postSchema = new mongoose.Schema({
     required: true,
   },
   image: Object,
-  authorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
+  // authorId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   required: true,
+  // },
   authorName: String,
   authorAvatar: String,
   likes: {

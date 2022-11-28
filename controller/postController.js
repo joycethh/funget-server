@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import PostDetails from "../../MUI5_Practice/src/featuers/posts/PostDetail.js";
 import Post from "../models/postsModel.js";
 
 //fetch all
