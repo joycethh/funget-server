@@ -8,7 +8,6 @@ import postRoutes from "./routes/postsRoutes.js";
 import userRoutes from "./routes/usersRoutes.js";
 import Post from "./models/postsModel.js";
 import Comment from "./models/commentsModel.js";
-import { commentPost } from "./controller/postController.js";
 
 //express app setup
 const app = express();
@@ -64,6 +63,21 @@ app.post("/testposts/addComment/:id", async (req, res) => {
     await seletedPost.save();
 
     res.status(200).json({ success: true, data: seletedPost });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+app.get("/testposts/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("id", id);
+  try {
+    const data = await Post.findById(id).populate({
+      path: "commentsAdded",
+      select: "content",
+    });
+    console.log("data", data);
+    res.status(200).json({ success: true, data });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
