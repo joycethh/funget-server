@@ -28,6 +28,6 @@ router.patch("/likes/:id", auth, likePost);
 
 router.post("/comments/:id", auth, commentPost);
 
-router.get("/posts/comments/:id", getComment);
+router.get("/posts/:id", getComment);
 
 export default router;
