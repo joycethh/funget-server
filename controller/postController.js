@@ -28,7 +28,7 @@ export const getPost = async (req, res) => {
 //create one
 export const createPost = async (req, res) => {
   const { message, image } = req.body;
-  console.log("create req-body", req.body);
+
   const newPost = new Post({
     message,
     image,
@@ -109,10 +109,8 @@ export const likePost = async (req, res) => {
 //add comment
 export const commentPost = async (req, res) => {
   const { id } = req.params;
-  console.log("id", id);
+
   const content = JSON.stringify(req.body);
-  console.log("req.body", req.body);
-  console.log("content", content);
 
   if (!req.userId)
     return res.json({ mssg: "Please sign in to comment the post" });
@@ -122,7 +120,6 @@ export const commentPost = async (req, res) => {
 
   try {
     const seletedPost = await Post.findById(id);
-    // console.log("selectedPost", seletedPost);
 
     const newComment = new Comment({
       content: content,
@@ -131,12 +128,12 @@ export const commentPost = async (req, res) => {
       authorAvatar: req.avatar,
       postId: seletedPost._id, //assign post id from the seleted post to the comment.postId key.
     });
-    console.log("newComment", newComment);
+
     await newComment.save();
 
     seletedPost.comments.push(newComment);
     await seletedPost.save();
-    console.log("seletedPost", seletedPost);
+
     res.status(200).json(seletedPost);
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -153,7 +150,7 @@ export const getComment = async (req, res) => {
       path: "commentsAdded",
       select: "content",
     });
-    console.log("data", data);
+
     res.status(200).json({ success: true, data });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
