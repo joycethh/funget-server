@@ -27,12 +27,14 @@ export const getPost = async (req, res) => {
 
 //create one
 export const createPost = async (req, res) => {
+  if (!req.userId)
+    return res.json({ mssg: "Please sign in to share a new post" });
   const { message, image } = req.body;
 
   const newPost = new Post({
     message,
     image,
-    createdAt: new Date().toISOString(),
+    // createdAt: new Date().toISOString(),
     authorId: req.userId,
     authorName: req.author,
     authorAvatar: req.avatar,
@@ -109,8 +111,9 @@ export const likePost = async (req, res) => {
 //add comment
 export const commentPost = async (req, res) => {
   const { id } = req.params;
-
-  const content = JSON.stringify(req.body);
+  const content = req.body.comments;
+  console.log("id and content", id, content);
+  // const content = JSON.stringify(req.body);
 
   if (!req.userId)
     return res.json({ mssg: "Please sign in to comment the post" });
@@ -126,15 +129,15 @@ export const commentPost = async (req, res) => {
       authorId: req.userId,
       authorName: req.author,
       authorAvatar: req.avatar,
-      postId: seletedPost._id, //assign post id from the seleted post to the comment.postId key.
+      postId: id, //assign post id from the seleted post to the comment.postId key.
     });
-
+    console.log("newComment", newComment);
     await newComment.save();
 
     seletedPost.comments.push(newComment);
     await seletedPost.save();
 
-    res.status(200).json(seletedPost);
+    res.status(200).json(newComment);
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
