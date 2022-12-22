@@ -1,21 +1,16 @@
-import mongoose, { isObjectIdOrHexString } from "mongoose";
-
-const Schema = mongoose.Schema;
+import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema(
   {
-    content: {
-      type: String,
-      required: true,
-    },
+    content: String,
+    authorId: String,
+    authorName: String,
+    authorAvatar: String,
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
       required: "true",
     },
-    authorId: String,
-    authorName: String,
-    authorAvatar: String,
   },
   { timestamps: true }
 );
