@@ -112,7 +112,7 @@ export const likePost = async (req, res) => {
 export const commentPost = async (req, res) => {
   const { id } = req.params;
   const content = req.body.comments;
-  console.log("id and content", id, content);
+
   // const content = JSON.stringify(req.body);
 
   if (!req.userId)
@@ -131,13 +131,14 @@ export const commentPost = async (req, res) => {
       authorAvatar: req.avatar,
       postId: id, //assign post id from the seleted post to the comment.postId key.
     });
-    console.log("newComment", newComment);
+    // console.log("newComment", newComment);
     await newComment.save();
 
     seletedPost.comments.push(newComment);
+    // console.log("seletedPost", seletedPost);
     await seletedPost.save();
 
-    res.status(200).json(newComment);
+    res.status(200).json({ newComment, seletedPost });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
