@@ -7,7 +7,7 @@ export const fetchPosts = async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
 
-    res.status(200).json(posts);
+    res.status(200).json({ postData: posts });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -16,10 +16,13 @@ export const fetchPosts = async (req, res) => {
 //get single
 export const getPost = async (req, res) => {
   const { id } = req.params;
-
+  console.log("id", id);
   try {
     const post = await Post.findById(id);
-    res.status(200).json(post);
+
+    const comments = await Comment.findOne({ postId: id });
+    console.log("comments", comments);
+    res.status(200).json({ postData: post });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -42,7 +45,7 @@ export const createPost = async (req, res) => {
 
   try {
     await newPost.save();
-    res.status(200).json(newPost);
+    res.status(200).json({ postData: newPost });
     return;
   } catch (error) {
     res.status(404).json({ mssg: error.message });
@@ -63,7 +66,7 @@ export const updatePost = async (req, res) => {
     { new: true }
   );
 
-  res.status(200).json(updatedPost);
+  res.status(200).json({ postData: updatedPost });
 };
 
 //delete one
@@ -105,7 +108,7 @@ export const likePost = async (req, res) => {
   const updatedPost = await Post.findByIdAndUpdate({ _id: id }, seletedPost, {
     new: true,
   });
-  res.json(updatedPost);
+  res.json({ postData: updatedPost });
 };
 
 //add comment
@@ -138,7 +141,7 @@ export const commentPost = async (req, res) => {
     // console.log("seletedPost", seletedPost);
     await seletedPost.save();
 
-    res.status(200).json({ newComment, seletedPost });
+    res.status(200).json({ commentData: newComment, postData: seletedPost });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
