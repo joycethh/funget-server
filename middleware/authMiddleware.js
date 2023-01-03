@@ -19,7 +19,7 @@ const authMiddleWare = async (req, res, next) => {
       decodedData = jwt.decode(token);
 
       req.userId = decodedData?.sub;
-      req.author = decodedData?.username;
+      req.author = decodedData?.name;
       req.avatar = decodedData?.picture;
     }
 

@@ -6,8 +6,10 @@ import Comment from "../models/commentsModel.js";
 export const fetchPosts = async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
+    const comments = await Comment.find();
+    // console.log("featch all comments", comments);
 
-    res.status(200).json({ postData: posts });
+    res.status(200).json({ commentData: comments, postData: posts });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -20,8 +22,8 @@ export const getPost = async (req, res) => {
     const post = await Post.findById(id);
 
     const comments = await Comment.findOne({ postId: id });
-    console.log("comments", comments);
-    res.status(200).json({ postData: post });
+
+    res.status(200).json({ commentData: comments, postData: post });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -141,6 +143,23 @@ export const commentPost = async (req, res) => {
     await seletedPost.save();
 
     res.status(200).json({ commentData: newComment, postData: seletedPost });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+//get comments
+export const getComment = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No post with id: ${id}`);
+  try {
+    const data = await Post.findById(id).populate({
+      path: "commentsAdded",
+      select: "content",
+    });
+
+    res.status(200).json({ success: true, data });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
