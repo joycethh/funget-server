@@ -16,7 +16,6 @@ export const fetchPosts = async (req, res) => {
 //get single
 export const getPost = async (req, res) => {
   const { id } = req.params;
-  console.log("id", id);
   try {
     const post = await Post.findById(id);
 
@@ -142,23 +141,6 @@ export const commentPost = async (req, res) => {
     await seletedPost.save();
 
     res.status(200).json({ commentData: newComment, postData: seletedPost });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-};
-
-//get comments
-export const getComment = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No post with id: ${id}`);
-  try {
-    const data = await Post.findById(id).populate({
-      path: "commentsAdded",
-      select: "content",
-    });
-
-    res.status(200).json({ success: true, data });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
