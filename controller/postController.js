@@ -112,12 +112,10 @@ export const likePost = async (req, res) => {
   res.json({ postData: updatedPost });
 };
 
-//add comment
+//comment Post
 export const commentPost = async (req, res) => {
   const { id } = req.params;
   const content = req.body.comments;
-
-  // const content = JSON.stringify(req.body);
 
   if (!req.userId)
     return res.json({ mssg: "Please sign in to comment the post" });
@@ -139,10 +137,16 @@ export const commentPost = async (req, res) => {
     await newComment.save();
 
     seletedPost.comments.push(newComment);
-    // console.log("seletedPost", seletedPost);
+
     await seletedPost.save();
 
-    res.status(200).json({ commentData: newComment, postData: seletedPost });
+    const allComments = await Comment.find({
+      postId: { $in: [mongoose.Types.ObjectId(id)] },
+    });
+    // console.log(" allComments", allComments);
+    // console.log("seletedPost", seletedPost);
+
+    res.status(200).json({ commentData: allComments, postData: seletedPost });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
