@@ -48,10 +48,9 @@ app.post(`/test/posts/addPost`, async (req, res) => {
 app.post(`/test/posts/addComment/:id`, async (req, res) => {
   const { id } = req.params;
   const { content } = req.body;
-  console.log("id and content", id, content);
 
-  // if (!req.userId)
-  //   return res.json({ mssg: "Please sign in to comment the post" });
+  if (!req.userId)
+    return res.json({ mssg: "Please sign in to comment the post" });
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
