@@ -6,6 +6,8 @@ import cors from "cors";
 
 import postRoutes from "./routes/postsRoutes.js";
 import userRoutes from "./routes/usersRoutes.js";
+import Post from "./models/postsModel.js";
+import Comment from "./models/commentsModel.js";
 
 //express app setup
 const app = express();

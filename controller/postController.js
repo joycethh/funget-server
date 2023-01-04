@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
-import PostMessage from "../models/postsModel.js";
+import Post from "../models/postsModel.js";
+import Comment from "../models/commentsModel.js";
 
 //fetch all
 export const fetchPosts = async (req, res) => {
   try {
-    const posts = await PostMessage.find().sort({ createdAt: -1 });
+    const posts = await Post.find().sort({ createdAt: -1 });
 
-    res.status(200).json(posts);
+    res.status(200).json({ postData: posts });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -15,10 +16,14 @@ export const fetchPosts = async (req, res) => {
 //get single
 export const getPost = async (req, res) => {
   const { id } = req.params;
-
   try {
-    const post = await PostMessage.findById(id);
-    res.status(200).json(post);
+    const post = await Post.findById(id);
+
+    const comments = await Comment.find({
+      postId: { $in: [mongoose.Types.ObjectId(id)] },
+    });
+
+    res.status(200).json({ commentData: comments, postData: post });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -26,22 +31,22 @@ export const getPost = async (req, res) => {
 
 //create one
 export const createPost = async (req, res) => {
-  const { message, tags, seletedFile, image } = req.body;
+  if (!req.userId)
+    return res.json({ mssg: "Please sign in to share a new post" });
+  const { message, image } = req.body;
 
-  const newPost = new PostMessage({
+  const newPost = new Post({
     message,
-    tags,
-    seletedFile,
     image,
-    createdAt: new Date().toISOString(),
-    userId: req.userId,
-    userName: req.author,
-    userAvatar: req.avatar,
+    // createdAt: new Date().toISOString(),
+    authorId: req.userId,
+    authorName: req.author,
+    authorAvatar: req.avatar,
   });
 
   try {
     await newPost.save();
-    res.status(200).json(newPost);
+    res.status(200).json({ postData: newPost });
     return;
   } catch (error) {
     res.status(404).json({ mssg: error.message });
@@ -56,13 +61,13 @@ export const updatePost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(
+  const updatedPost = await Post.findByIdAndUpdate(
     { _id: id },
     { ...req.body },
     { new: true }
   );
 
-  res.status(200).json(updatedPost);
+  res.status(200).json({ postData: updatedPost });
 };
 
 //delete one
@@ -73,7 +78,7 @@ export const deletePost = async (req, res) => {
     return res.status(404).send(`No post with id: ${id}`);
 
   try {
-    await PostMessage.findByIdAndDelete(id);
+    await Post.findByIdAndDelete(id);
     res.status(200).json(id);
   } catch (error) {
     res.status(404).json({ mssg: error.message });
@@ -88,7 +93,7 @@ export const likePost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const seletedPost = await PostMessage.findById(id);
+  const seletedPost = await Post.findById(id);
 
   const index = seletedPost.likes.findIndex(
     (userId) => userId === String(req.userId)
@@ -101,17 +106,17 @@ export const likePost = async (req, res) => {
     );
   }
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(
-    { _id: id },
-    seletedPost,
-    { new: true }
-  );
-  res.json(updatedPost);
+  const updatedPost = await Post.findByIdAndUpdate({ _id: id }, seletedPost, {
+    new: true,
+  });
+  res.json({ postData: updatedPost });
 };
 
-//comment post
+//comment Post
 export const commentPost = async (req, res) => {
   const { id } = req.params;
+
+  const content = req.body.comments;
 
   if (!req.userId)
     return res.json({ mssg: "Please sign in to comment the post" });
@@ -119,31 +124,46 @@ export const commentPost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const seletedPost = await PostMessage.findById(id);
-  const commentBody = req.body;
-  console.log("commentBody", commentBody);
+  try {
+    const seletedPost = await Post.findById(id);
 
-  if (seletedPost.comments) {
-    seletedPost.comments.commentBody.push(commentBody);
-    const updatedPost = await PostMessage.findByIdAndUpdate(
-      { _id: id },
-      seletedPost,
-      { new: true }
-    );
+    const newComment = new Comment({
+      content: content,
+      authorId: req.userId,
+      authorName: req.author,
+      authorAvatar: req.avatar,
+      postId: id, //assign post id from the seleted post to the comment.postId key.
+    });
 
-    res.status(200).json(updatedPost);
-    return;
-  } else {
-    const commentBody = req.body;
-    const postWithComments = { seletedPost, comments: commentBody };
-    console.log("postWithComments", postWithComments);
-    const updatedPost = await PostMessage.findByIdAndUpdate(
-      { _id: id },
-      postWithComments,
-      { new: true }
-    );
+    await newComment.save();
 
-    res.status(200).json(updatedPost);
-    return;
+    seletedPost.comments.push(newComment);
+
+    await seletedPost.save();
+
+    const allComments = await Comment.find({
+      postId: { $in: [mongoose.Types.ObjectId(id)] },
+    });
+
+    res.status(200).json({ commentData: allComments, postData: seletedPost });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+//get comments
+export const getComment = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No post with id: ${id}`);
+  try {
+    const data = await Post.findById(id).populate({
+      path: "commentsAdded",
+      select: "content",
+    });
+
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 };
