@@ -133,7 +133,7 @@ export const commentPost = async (req, res) => {
       authorAvatar: req.avatar,
       postId: id, //assign post id from the seleted post to the comment.postId key.
     });
-    // console.log("newComment", newComment);
+
     await newComment.save();
 
     seletedPost.comments.push(newComment);
@@ -143,8 +143,6 @@ export const commentPost = async (req, res) => {
     const allComments = await Comment.find({
       postId: { $in: [mongoose.Types.ObjectId(id)] },
     });
-    // console.log(" allComments", allComments);
-    // console.log("seletedPost", seletedPost);
 
     res.status(200).json({ commentData: allComments, postData: seletedPost });
   } catch (err) {
