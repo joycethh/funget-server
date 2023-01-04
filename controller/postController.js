@@ -6,10 +6,8 @@ import Comment from "../models/commentsModel.js";
 export const fetchPosts = async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
-    const comments = await Comment.find();
-    // console.log("featch all comments", comments);
 
-    res.status(200).json({ commentData: comments, postData: posts });
+    res.status(200).json({ postData: posts });
   } catch (error) {
     res.status(404).json({ mssg: error.message });
   }
@@ -21,7 +19,9 @@ export const getPost = async (req, res) => {
   try {
     const post = await Post.findById(id);
 
-    const comments = await Comment.findOne({ postId: id });
+    const comments = await Comment.find({
+      postId: { $in: [mongoose.Types.ObjectId(id)] },
+    });
 
     res.status(200).json({ commentData: comments, postData: post });
   } catch (error) {
