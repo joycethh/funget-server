@@ -115,6 +115,7 @@ export const likePost = async (req, res) => {
 //comment Post
 export const commentPost = async (req, res) => {
   const { id } = req.params;
+
   const content = req.body.comments;
 
   if (!req.userId)

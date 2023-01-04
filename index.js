@@ -24,58 +24,6 @@ app.use(cors());
 app.use("/posts", postRoutes);
 app.use("/users", userRoutes);
 
-//db testing
-app.post(`/test/posts/addPost`, async (req, res) => {
-  const { message, image } = req.body;
-
-  const newPost = new Post({
-    message,
-    image,
-    createdAt: new Date().toISOString(),
-    authorId: req.userId,
-    authorName: req.author,
-    authorAvatar: req.avatar,
-  });
-  try {
-    await newPost.save();
-    res.status(200).json(newPost);
-    return;
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
-
-app.post(`/test/posts/addComment/:id`, async (req, res) => {
-  const { id } = req.params;
-  const { content } = req.body;
-
-  if (!req.userId)
-    return res.json({ mssg: "Please sign in to comment the post" });
-
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No post with id: ${id}`);
-
-  try {
-    const seletedPost = await Post.findById(id);
-
-    const newComment = new Comment({
-      content: content,
-      authorId: req.userId,
-      authorName: req.author,
-      authorAvatar: req.avatar,
-      postId: id, //assign post id from the seleted post to the comment.postId key.
-    });
-    console.log("newComment", newComment);
-    await newComment.save();
-
-    seletedPost.comments.push(newComment);
-    await seletedPost.save();
-
-    res.status(200).json(newComment);
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
 //for testing
 app.get("/", (req, res) => {
   res.send("The FUNGET APP IS RUNNING");
